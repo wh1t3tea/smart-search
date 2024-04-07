@@ -6,7 +6,7 @@ import argparse
 
 async def main(arg):
     #await create_tables()
-    #await get_organization(arg.name)
+    await get_organization(arg.name)
     #await get_employee(arg.name)
     #data = [{"employee_name": "Антонов К.В",
             #  "department": "ДЕП №3",
@@ -29,7 +29,7 @@ async def main(arg):
             #  "period_to": datetime.date(2024, 3, 10),
             #  "authority_type": "основной"}
             # ]
-    await supervised_insert(data)
+    #await supervised_insert(data)
 
 
 if __name__ == "__main__":

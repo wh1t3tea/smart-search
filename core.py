@@ -2,6 +2,7 @@ from sqlalchemy import text, insert, delete, select
 from database import async_engine, session_factory
 from models import Base, OrganizationsOrm, EmployeesOrm, OrgEmpOrm
 from tabulate import tabulate
+import prettytable as pt
 
 
 async def to_table(rows):
@@ -15,7 +16,10 @@ async def to_table(rows):
                "Тип сотрудника",
                "Назначен с",
                "Назначен до"]
-    return tabulate(rows, headers)
+    table = pt.PrettyTable(headers)
+    for row in rows:
+        table.add_row(row)
+    return table
 
 
 async def create_tables():
@@ -24,7 +28,7 @@ async def create_tables():
         await conn.run_sync(Base.metadata.create_all)
 
 
-async def get_organization(organization_name):
+async def get_organization(org_name):
     query = (
         select(
             OrganizationsOrm.name.label("org_name"),
@@ -49,7 +53,7 @@ async def get_organization(organization_name):
         return await to_table(result)
 
 
-async def get_employee(employee_name):
+async def get_employee(employee):
     query = (
         select(
             OrganizationsOrm.name.label("org_name"),
@@ -71,7 +75,7 @@ async def get_employee(employee_name):
     async with session_factory() as session:
         result = await session.execute(query)
         result = result.all()
-        print(await to_table(result))
+        return await to_table(result)
 
 
 async def supervised_insert(data):
@@ -96,6 +100,7 @@ async def supervised_insert(data):
     async with session_factory() as session:
 
         for row in data:
+            print(row)
 
             employee_row = {key: value for key, value in row.items() if key in employee_keys}
             employee_row["name"] = employee_row["employee_name"]
